@@ -6,14 +6,14 @@ import pgzrun
 
 #Constantes do Jogo
 WIDTH, HEIGHT = 900, 600
-gameState = 'menu'  # Estado inicial do jogo
-sounds_enabled = True  # Controle de som e música
+gameState = 'menu'
+sounds_enabled = True  
 
 #Elementos Visuais do Jogo
-background3 = Actor('battleground3.png')  # Cenário
-floor = Actor('chao.png')  # Piso do jogo
-player = Actor('hero_idle_0.png')  # Jogador
-enemy = Actor('enemy_idle0.png', anchor=('center', 'bottom'))  # Inimigo
+background3 = Actor('battleground3.png')
+floor = Actor('chao.png')
+player = Actor('hero_idle_0.png')
+enemy = Actor('enemy_idle0.png', anchor=('center', 'bottom'))
 
 #Posicionamento Inicial
 floor.pos = (450, 550)
@@ -21,10 +21,10 @@ player.pos = (50, 440)
 enemy.pos = (800, 500)
 
 #Botões do Menu Principal
-button_start = Rect(350, 200, 200, 50)  # Começar Jogo
-button_sound = Rect(350, 275, 200, 50)  # Música e Sons
-button_exit = Rect(350, 350, 200, 50)  # Sair
-button_restart = Rect(350, 425, 200, 50)  # Reiniciar Jogo
+button_start = Rect(350, 200, 200, 50) 
+button_sound = Rect(350, 275, 200, 50)
+button_exit = Rect(350, 350, 200, 50)
+button_restart = Rect(350, 425, 200, 50)
 
 #Estados do Jogo
 playerDead = False
@@ -32,7 +32,7 @@ enemyDead = False
 jumping = False
 attacking = False
 enemyAttacking = False
-gameMessage = None  # Mensagem de vitória ou derrota
+gameMessage = None
 
 #Parâmetros de Animação e Mecânicas
 attackFrame = 0
@@ -100,33 +100,33 @@ def update():
 def toggle_sounds():
     global sounds_enabled
 
-    sounds_enabled = not sounds_enabled  # Alterna o estado de ativado/desativado
+    sounds_enabled = not sounds_enabled
 
     if sounds_enabled:
-        sounds.background_music.play(-1)  # 🔥 Liga a música em loop
+        sounds.background_music.play(-1)  
     else:
-        sounds.background_music.stop()  # 🔥 Desliga a música
+        sounds.background_music.stop()  
 
 def on_mouse_down(pos):
     global gameState, sounds_enabled
 
-    if gameState == 'menu':  # 🔥 Verifica cliques no menu
+    if gameState == 'menu':  
         sounds.background_music.stop()
         if button_start.collidepoint(pos):
-            gameState = 'play'  # Começa o jogo
-            if sounds_enabled:  # 🔥 Só toca a música se os sons estiverem ativados
+            gameState = 'play'  
+            if sounds_enabled:  
                 sounds.background_music.play(-1)
         elif button_sound.collidepoint(pos):
-            toggle_sounds()  # 🔥 Alterna entre ativado/desativado
+            toggle_sounds()  
         elif button_exit.collidepoint(pos):
-            exit()  # Sai do jogo
-        elif button_restart.collidepoint(pos):  # 🔥 Se clicar no botão de Restart
-            reset_game()  # 🔥 Reinicia o jogo
+            exit()  
+        elif button_restart.collidepoint(pos):  
+            reset_game()  
 
 def draw():
     screen.clear()
 
-    if gameState == 'menu':  # 🔥 Desenha o menu principal
+    if gameState == 'menu':
         screen.draw.text("Menu Principal", center=(WIDTH / 2, 100), fontsize=50, color="white")
         screen.draw.filled_rect(button_start, "gray")
         screen.draw.filled_rect(button_sound, "gray")
@@ -138,17 +138,17 @@ def draw():
         screen.draw.text("Sair", center=button_exit.center, fontsize=30, color="white")
         screen.draw.text("Reiniciar Jogo", center=button_restart.center, fontsize=30, color="white")
 
-    elif gameState == 'play':  # 🔥 Desenha o jogo
+    elif gameState == 'play':
         background3.draw()
         floor.draw()
         player.draw()
         enemy.draw()
         draw_health_bars()
 
-    if gameMessage:  # 🔥 Se houver mensagem de vitória/derrota, exibir na tela preta
-        screen.fill((0, 0, 0))  # 🔥 Preenche a tela com preto
+    if gameMessage:
+        screen.fill((0, 0, 0))
         screen.draw.text(gameMessage, center=(WIDTH / 2, HEIGHT / 2), fontsize=50, color="white")
-        return  # 🔥 Não desenha mais nada
+        return  
 
 def move_player():
     global jumping, jumps, playerDirection, attacking, runFrame
@@ -157,9 +157,8 @@ def move_player():
         return
 
     runSpeed = 0.07  
-    moving = False  # 🔥 Variável para verificar se o jogador está se movendo
+    moving = False
 
-    # 🔥 Verifica se o jogador está pressionando as teclas de movimento
     if keyboard.d and player.x < WIDTH:
         playerDirection = "right"
         if not attacking:
@@ -167,7 +166,7 @@ def move_player():
             runFrame = (runFrame + 1) % len(playerRun[playerDirection])
             schedule(lambda: move_player(), runSpeed)
         player.x += 5
-        moving = True  # 🔥 Marca que o jogador está se movendo
+        moving = True
 
     elif keyboard.a and player.x > 0:
         playerDirection = "left"
@@ -176,29 +175,24 @@ def move_player():
             runFrame = (runFrame + 1) % len(playerRun[playerDirection])
             schedule(lambda: move_player(), runSpeed)
         player.x -= 5
-        moving = True  # 🔥 Marca que o jogador está se movendo
+        moving = True
 
-    # 🔥 Se o jogador parou de andar e não está atacando, volta para Idle
     if not moving and not attacking and not jumping:
         player.image = playerIdle[playerDirection][0]
 
-    # Ataque do jogador
     if keyboard.k and not attacking:
         attacking = True
         animate_attack()
 
-    # Pulo do jogador
     if keyboard.space and not jumping:
         jumping = True
         jumps -= 1
         if sounds_enabled:
-            sounds.herojump.play()  # 🔥 Toca o som do pulo
+            sounds.herojump.play() 
         player.image = playerJump[playerDirection][random.randint(0, len(playerJump[playerDirection]) - 1)]
         player.y -= 100
         schedule(land_player, 0.5)
 
-
-    # Gravidade: impede que o jogador flutue no ar
     if not player.colliderect(floor):
         player.y += 5
         jumping = True
@@ -209,11 +203,11 @@ def move_player():
 def animate_attack():
     global attackFrame, attacking, enemyHealth, enemyDead, enemyDeathFrame
 
-    if enemyDead:  # Impede ataques quando o inimigo está morto
+    if enemyDead: 
         attacking = False
         return
 
-    if attackFrame == 0 and sounds_enabled:  # 🔥 Toca o som apenas quando o ataque começa
+    if attackFrame == 0 and sounds_enabled:
         sounds.heroattack.play()
 
     if attackFrame < len(playerAttack[playerDirection]):
@@ -228,7 +222,7 @@ def animate_attack():
         if abs(player.x - enemy.x) < 50 and not enemyDead:
             enemyHealth -= playerDamage
             if sounds_enabled:
-                sounds.enemyhurt.play()  # 🔥 Toca o som de dano no inimigo
+                sounds.enemyhurt.play()
             if enemyHealth <= 0:
                 enemyHealth = 0
                 enemyDead = True
@@ -244,14 +238,14 @@ def animate_player_death():
     global playerDeathFrame, playerDead, gameMessage
 
     if playerDeathFrame == 0 and sounds_enabled:
-        sounds.herodie.play()  # 🔥 Toca o som da morte do herói
+        sounds.herodie.play()
 
     if playerDeathFrame < len(playerDeath[playerDirection]):
         player.image = playerDeath[playerDirection][playerDeathFrame]
         playerDeathFrame += 1
         schedule(animate_player_death, 0.12)
     else:
-        gameMessage = "Você perdeu!"
+        gameMessage = "you lose!"
         screen.clear()
         schedule(return_to_menu, 2) 
 
@@ -278,12 +272,12 @@ def enemy_follow_player():
     global enemyDirection, playerDead, playerHealth, enemyAttacking, canEnemyAttack
 
     if enemyDead:
-        return  # Se o inimigo estiver morto, ele não anda mais
+        return
 
     if abs(enemy.x - player.x) < 50 and not playerDead:
         if not enemyAttacking and canEnemyAttack:
             enemyAttacking = True
-            canEnemyAttack = False  # Impede ataque contínuo
+            canEnemyAttack = False
             animate_enemy_attack()
             playerHealth -= enemyDamage
             if sounds_enabled:
@@ -293,7 +287,7 @@ def enemy_follow_player():
                 playerDead = True
                 animate_player_death()
 
-            schedule(enable_enemy_attack, enemyAttackCooldown)  # Aguarda cooldown antes do próximo ataque
+            schedule(enable_enemy_attack, enemyAttackCooldown)
     else:
         if enemy.x < player.x:
             enemyDirection = "right"
@@ -301,12 +295,10 @@ def enemy_follow_player():
         elif enemy.x > player.x:
             enemyDirection = "left"
             enemy.x -= 2
-
-        # 🔥 Apenas reinicia a animação se ele estiver andando e não atacando
         if not enemyAttacking and enemyWalkFrame == 0:
             animate_enemy_walk()
 
-    enemy.y = floor.pos[1] - 50  # Mantém o inimigo no chão
+    enemy.y = floor.pos[1] - 50 
 
 def animate_enemy_walk():
     global enemyWalkFrame
@@ -323,7 +315,7 @@ def animate_enemy_death():
 
     if enemyDeathFrame == 0 and sounds_enabled:
         enemyDead = True
-        sounds.enemydie.play()  # 🔥 Toca o som da morte do inimigo
+        sounds.enemydie.play() 
         enemy.image = enemyDeath[enemyDirection][0]
 
     if enemyDeathFrame < len(enemyDeath[enemyDirection]):
@@ -331,10 +323,9 @@ def animate_enemy_death():
         enemyDeathFrame += 1
         schedule(animate_enemy_death, 0.5)
     else:
-        enemy.image = enemyDeath[enemyDirection][-1]  # Mantém o último frame
-        gameMessage = "Você venceu!"  # 🔥 Exibe a mensagem de vitória
-        screen.clear() 
-        schedule(return_to_menu, 2)  # 🔥 Retorna ao menu após 2 segundos
+        enemy.image = enemyDeath[enemyDirection][-1]  
+        gameMessage = "you win!"  
+        schedule(return_to_menu, 2)  
 
 def return_to_menu():
     global gameMessage
@@ -360,8 +351,8 @@ def draw_health_bars():
 def reset_game():
     global gameState, jumping, jumps, attacking, attackFrame, playerHealth, enemyHealth, playerDead, enemyDead, gameMessage, playerDeathFrame, enemyDeathFrame, enemyAttackFrame, enemyWalkFrame
 
-    gameState = 'menu'  # 🔥 Retorna para o menu principal
-    gameMessage = None  # 🔥 Remove qualquer mensagem de vitória ou derrota
+    gameState = 'menu'
+    gameMessage = None  
     player.pos = (50, 440)
     enemy.pos = (800, 500)
 
@@ -369,7 +360,6 @@ def reset_game():
     playerDead, enemyDead, jumping, attacking = False, False, False, False
     attackFrame = 0
 
-    # 🔥 Reseta posições e estados do inimigo
     enemy.pos = (800, 500)
     enemyHealth = 50
     enemyDead = False  
