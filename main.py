@@ -127,16 +127,16 @@ def draw():
     screen.clear()
 
     if gameState == 'menu':
-        screen.draw.text("Menu Principal", center=(WIDTH / 2, 100), fontsize=50, color="white")
+        screen.draw.text("BattleQuest: Shadows of the Arena", center=(WIDTH / 2, 100), fontsize=50, color="white")
         screen.draw.filled_rect(button_start, "gray")
         screen.draw.filled_rect(button_sound, "gray")
         screen.draw.filled_rect(button_exit, "gray")
         screen.draw.filled_rect(button_restart, "gray")
 
-        screen.draw.text("Começar Jogo", center=button_start.center, fontsize=30, color="white")
-        screen.draw.text("Música: " + ("Ligada" if sounds_enabled else "Desligada"), center=button_sound.center, fontsize=30, color="white")
-        screen.draw.text("Sair", center=button_exit.center, fontsize=30, color="white")
-        screen.draw.text("Reiniciar Jogo", center=button_restart.center, fontsize=30, color="white")
+        screen.draw.text("start game", center=button_start.center, fontsize=30, color="white")
+        screen.draw.text("sounds: " + ("ON" if sounds_enabled else "OFF"), center=button_sound.center, fontsize=30, color="white")
+        screen.draw.text("exit", center=button_exit.center, fontsize=30, color="white")
+        screen.draw.text("restart game", center=button_restart.center, fontsize=30, color="white")
 
     elif gameState == 'play':
         background3.draw()
